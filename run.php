@@ -244,7 +244,7 @@ function cetak($msg, $tipe){
 				}else if($tipe=="date"){echo $var." ".$b."Date"."      ".$c." ~> ".$p.date('d/m/Y').str_repeat(" ",4).$var." ".$b."Scipt"."\t".$c." ~> ".$h."Online".str_repeat(" ",5).$var."\n";echo $var." ".$b."Time"."      ".$c." ~> ".$p.date('H:i:s').str_repeat(" ",6).$var." ".$b."Versi"."\t".$c." ~> ".$p.$msg1.str_repeat(" ",8).$var."\n";}}}
 /** CF & FW **/
 function sec($res){
-	$r = "/r                   /r";
+	$r = "\r                       \r";
 	if(preg_match('/Cloudflare/',$res)){
 		echo col('Cloudflare detect','m');
 		sleep(10);echo $r;
