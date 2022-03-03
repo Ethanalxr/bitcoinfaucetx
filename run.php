@@ -5,7 +5,7 @@ $zone = $api["timezone"];
 if($zone){
 date_default_timezone_set($zone);}
 
-$master = ["iewil","bitcoinfaucetx","1.0","5"];//master,title,versi,short
+$master = ["iewil","bitcoinfaucetx","1.1","5"];//master,title,versi,short
 $n = "\n";$n2 = "\n\n";$t = "\t";$r="\r                              \r";
 $line=col(str_repeat('═',56),'u').$n;
 
