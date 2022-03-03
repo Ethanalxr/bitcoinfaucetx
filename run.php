@@ -167,7 +167,7 @@ if(preg_match('/Good job/',$r)){
 	ket('Success',$ss);
 	}else{
 		echo col("invalid claim",'m');
-echo "\n";
+		echo "\n";
 		sleep(5);
 	}
 echo $line;
