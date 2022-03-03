@@ -66,6 +66,15 @@ if($pil==1){goto faucet;
 faucet:
 while(true){
 	$r1=Run('https://bitcoinfaucetx.com/faucet',$ua);
+	if(preg_match('/Firewall/',$r1)){
+		echo col('Firewall detect','m');
+		$r = Run('https://bitcoinfaucetx.com/firewall',$ua);
+		$csrf = explode('"',explode('_token_name" value="',$r)[1])[0];
+		$data = "g-recaptcha-response=&captchaType=recaptchav2&csrf_token_name=".$csrf;
+		$r = Run('https://bitcoinfaucetx.com/firewall/verify',$ua,$data);
+		sleep(10);echo $r;
+		goto faucet;
+		}
 	$sec=sec($r1);
 	$cf=$sec[0];
 	$fw=$sec[1];
@@ -244,18 +253,20 @@ function cetak($msg, $tipe){
 				}else if($tipe=="date"){echo $var." ".$b."Date"."      ".$c." ~> ".$p.date('d/m/Y').str_repeat(" ",4).$var." ".$b."Scipt"."\t".$c." ~> ".$h."Online".str_repeat(" ",5).$var."\n";echo $var." ".$b."Time"."      ".$c." ~> ".$p.date('H:i:s').str_repeat(" ",6).$var." ".$b."Versi"."\t".$c." ~> ".$p.$msg1.str_repeat(" ",8).$var."\n";}}}
 /** CF & FW **/
 function sec($res){
+	global $ua;
 	$r = "\r                       \r";
 	if(preg_match('/Cloudflare/',$res)){
 		echo col('Cloudflare detect','m');
 		sleep(10);echo $r;
 		$a=1;
 		}
-	if(preg_match('/Firewall/',$res)){
-		echo col('Firewall detect','m');
-		sleep(10);echo $r;
-		$b=1;
-		}
-	return array($a,$b);}
+	//if(preg_match('/Firewall/',$res)){
+		//echo col('Firewall detect','m');
+		//sleep(10);echo $r;
+		//$b=1;
+		//}
+	return array($a,$b);
+}
 $sec=sec($r1);
 $cf=$sec[0];
 $fw=$sec[1];
