@@ -5,7 +5,7 @@ $zone = $api["timezone"];
 if($zone){
 date_default_timezone_set($zone);}
 
-$master = ["iewil","bitcoinfaucetx","1.1","5"];//master,title,versi,short
+$master = ["iewil","bitcoinfaucetx","1.0","5"];//master,title,versi,short
 $n = "\n";$n2 = "\n\n";$t = "\t";$r="\r                              \r";
 $line=col(str_repeat('═',56),'u').$n;
 
@@ -66,6 +66,7 @@ if($pil==1){goto faucet;
 faucet:
 while(true){
 	$r1=Run('https://bitcoinfaucetx.com/faucet',$ua);
+	/*
 	if(preg_match('/Firewall/',$r1)){
 		echo col('Firewall detect','m');
 		$r = Run('https://bitcoinfaucetx.com/firewall',$ua);
@@ -75,6 +76,7 @@ while(true){
 		sleep(10);echo $r;
 		goto faucet;
 		}
+		*/
 	$sec=sec($r1);
 	$cf=$sec[0];
 	$fw=$sec[1];
@@ -260,11 +262,11 @@ function sec($res){
 		sleep(10);echo $r;
 		$a=1;
 		}
-	//if(preg_match('/Firewall/',$res)){
-		//echo col('Firewall detect','m');
-		//sleep(10);echo $r;
-		//$b=1;
-		//}
+	if(preg_match('/Firewall/',$res)){
+		echo col('Firewall detect','m');
+		sleep(10);echo $r;
+		$b=1;
+		}
 	return array($a,$b);
 }
 $sec=sec($r1);
