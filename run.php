@@ -5,7 +5,7 @@ $zone = $api["timezone"];
 if($zone){
 date_default_timezone_set($zone);}
 
-$master = ["iewil","bitcoinfaucetx","1.1","5"];//master,title,versi,short
+$master = ["iewil","bitcoinfaucetx","1.2","5"];//master,title,versi,short
 $n = "\n";$n2 = "\n\n";$t = "\t";$r="\r                              \r";
 $line=col(str_repeat('═',56),'u').$n;
 
@@ -74,7 +74,7 @@ while(true){
 		$r = Run('https://bitcoinfaucetx.com/firewall/verify',$ua,$data);
 		sleep(10);echo "\r                       \r";
 		goto faucet;
-		}
+	}
 	$sec=sec($r1);
 	$cf=$sec[0];
 	$fw=$sec[1];
@@ -86,38 +86,43 @@ while(true){
 		echo col('you reach max claim! come back tomorrow','m').$n.$line;
 		goto menu;
 		}
-		$leftt=$left-1;
-		$tmr=explode(';',explode('var wait=',$r1)[1])[0];//2328-1;
-		if($tmr){
-			tmr($tmr);goto faucet;
+		for($i=0;$i<=5;$i++){
+			$r1=Run('https://bitcoinfaucetx.com/faucet',$ua);
+			$leftt=$left-1;
+			$tmr=explode(';',explode(' var wait = ',$r1)[1])[0];//2328-1;
+			if($tmr){
+				tmr($tmr);goto faucet;
 			}
-		
-		echo col('bypasss','k');
-		$bot=explode('" rel=\"',$r1);
-		$bot1=explode('\"',$bot[1])[0];
-		$bot2=explode('\"',$bot[2])[0];
-		$bot3=explode('\"',$bot[3])[0];
-		
-		$csrf=explode('">',explode('_token_name" id="token" value="',$r1)[1])[0];//8626444245754dde619ea5f114ffa25b
-		$token=explode('">',explode('name="token" value="',$r1)[1])[0];
-		
-		$data="antibotlinks=+".$bot2."+".$bot3."+".$bot1."&csrf_token_name=".$csrf."&token=".$token."&captcha=recaptchav2&g-recaptcha-response=";
-		$r2=Run('https://bitcoinfaucetx.com/faucet/verify',$ua,$data);
-		
-		if(preg_match('/Good job/',$r2)){
-			echo $r;
-			$ss=explode("'",explode("Swal.fire('Good job!', '",$r2)[1])[0];
-			ket('Success',$ss);
-			Ket('C left',$leftt-1);
-			Ket('Balance',info()[1]);
-			echo $line;
+			
+			echo col('bypasss','k');
+			$bot=explode('" rel=\"',$r1);
+			$bot1=explode('\"',$bot[1])[0];
+			$bot2=explode('\"',$bot[2])[0];
+			$bot3=explode('\"',$bot[3])[0];
+			
+			$bott = z($bot1,$bot2,$bot3)[$i];
+			
+			$csrf=explode('">',explode('_token_name" id="token" value="',$r1)[1])[0];//8626444245754dde619ea5f114ffa25b
+			$token=explode('">',explode('name="token" value="',$r1)[1])[0];
+			
+			$data="csrf_token_name=".$csrf."&token=".$token."&captcha=recaptchav2&g-recaptcha-response=";
+			$r2=Run('https://bitcoinfaucetx.com/faucet/verify',$ua,$data);
+			
+			if(preg_match('/Good job/',$r2)){
+				echo $r;
+				$ss=explode("'",explode("Swal.fire('Good job!', '",$r2)[1])[0];
+				ket('Success',$ss);
+				Ket('C left',$leftt-1);
+				Ket('Balance',info()[1]);
+				echo $line;
 			}else{
 				$wr= explode('</div>',explode('<div class="alert text-center alert-danger"><i class="fas fa-exclamation-circle"></i> ',$r2)[1])[0];//Invalid Claim
 				echo $r;
 				echo col($wr,'m');
 				sleep(2);
 				echo $r;
-				}
+			}
+		}
 	}
 ptc:
 while(true){
@@ -217,6 +222,7 @@ function Run($url, $httpheader = 0, $post = 0, $proxy = 0){ // url, postdata, ht
 	}
 }
 /** Standard function **/
+function Z($x,$y,$z){return ["+".$y."+".$z."+".$x,"+".$x."+".$y."+".$z,"+".$x."+".$z."+".$y,"+".$y."+".$x."+".$z,"+".$z."+".$y."+".$x,"+".$z."+".$x."+".$y];}
 function c(){system('clear');}
 function col($str,$color){
 	if($color==5){$color=['h','k','b','u','m'][array_rand(['h','k','b','u','m'])];}
@@ -285,3 +291,4 @@ function bn(){c();global $master;
 	cetak("SCRIPT GRATIS - RESIKO DI TANGGUNG USER ", "warn");
 	cetak("#","line");
 	echo "\n\n";}
+
