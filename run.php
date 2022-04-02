@@ -5,7 +5,7 @@ $zone = $api["timezone"];
 if($zone){
 date_default_timezone_set($zone);}
 
-$master = ["iewil","bitcoinfaucetx","1.2","5"];//master,title,versi,short
+$master = ["iewil","bitcoinfaucetx","1.3","5"];//master,title,versi,short
 $n = "\n";$n2 = "\n\n";$t = "\t";$r="\r                              \r";
 $line=col(str_repeat('═',56),'u').$n;
 
@@ -31,6 +31,8 @@ if($status == "on"){
 echo col(" The script is disabled","rr").$n2;
 echo Slow($disable).$n;
 exit;}
+//$cookie='_ga=GA1.2.228534775.1648864401; _gid=GA1.2.1254795775.1648864401; ci_session=4f646da23e0b9fe65ba83d0dda44cccf5f7e583e; _gat_gtag_UA_219975471_1=1; _ccnsad_pop=500; csrf_cookie=52be2994d8ada5cf8720f9da57200a7b';
+//$user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36';
 
 
 //Bot
@@ -38,40 +40,42 @@ bn();
 cookie:
 $cookie=Save('Cookie');
 $user_agent=Save('User_Agent');
-$wallet = Save('Wallet_Faucetpay');
+//$wallet = Save('Wallet_Faucetpay');
 bn();
+
 
 $ua[]="user-agent: ".$user_agent;
 $ua[]="cookie: ".$cookie;
 
 $info=info();
-
 Ket('Username',$info[0]);
 Ket('Balance',$info[1]);
 Ket('Energy',$info[2]);
+
 echo $line;
 menu:
 echo col("1","p").col(" ≽ ","m").col("Faucet ","b").$n;
 echo col("2","p").col(" ≽ ","m").col("Ptc","b").$n;
-echo col("3","p").col(" ≽ ","m").col("Withdraw","b").$n;
-echo col("4","p").col(" ≽ ","m").col("Update Cookie ","b").$n;
+//echo col("3","p").col(" ≽ ","m").col("Withdraw","b").$n;
+echo col("3","p").col(" ≽ ","m").col("Update Cookie ","b").$n;
 $pil=readline(col("Input Number","h").col(" ≽ ","m"));
 cetak("#","line");
 if($pil==1){goto faucet;
 }elseif($pil==2){goto ptc;
-}elseif($pil==3){goto wd;
-}elseif($pil==4){unlink('Cookie');goto cookie;
+}elseif($pil==3){unlink('Cookie');goto cookie;
 }else{echo col("Bad number you selected!","m").$n;echo $line;goto menu;}
 
 faucet:
 while(true){
-	$r1=Run('https://bitcoinfaucetx.com/faucet',$ua);
-	if(preg_match('/Firewall/',$r1)){
+	$r1=Run('https://bitcoinfaucetx.com/user/claim',$ua);
+	$warn = explode('</div>',explode('<div class="alert alert-danger p-1">',$r1)[1])[0];
+	$left=explode('</h3>',explode('<h3 class="text-left text-white">',$r1)[1])[0];
+	if(preg_match('/Firewall Captcha/',$r1)){
 		echo col('Firewall detect','m');
-		$r = Run('https://bitcoinfaucetx.com/firewall',$ua);
-		$csrf = explode('"',explode('_token_name" value="',$r)[1])[0];
-		$data = "g-recaptcha-response=&captchaType=recaptchav2&csrf_token_name=".$csrf;
-		$r = Run('https://bitcoinfaucetx.com/firewall/verify',$ua,$data);
+		$res = Run('https://bitcoinfaucetx.com/user/firewall?redirect=aHR0cHM6Ly9iaXRjb2luZmF1Y2V0eC5jb20vdXNlci9kYXNoYm9hcmQ=',$ua);
+		$csrf = explode('"',explode('<input type="hidden" name="csrf_token" value="',$res)[1])[0];
+		$data = "csrf_token=".$csrf."&g-recaptcha-response=";
+		Run('https://bitcoinfaucetx.com/user/firewall/check?redirect=aHR0cHM6Ly9iaXRjb2luZmF1Y2V0eC5jb20vdXNlci9kYXNoYm9hcmQ=',$ua,$data);
 		sleep(10);echo "\r                       \r";
 		goto faucet;
 	}
@@ -80,86 +84,86 @@ while(true){
 	$fw=$sec[1];
 	if($cf||$fw==1){
 		goto faucet;
-		}
-	$left=explode('/',explode('<p class="lh-1 mb-1 font-weight-bold">',$r1)[3])[0];
+	}
+	if($warn){
+		print col($warn,'m')."\n";
+		echo $line;
+		goto menu;
+	}
 	if($left=='0'){
 		echo col('you reach max claim! come back tomorrow','m').$n.$line;
 		goto menu;
 		}
-		for($i=0;$i<=5;$i++){
-			$r1=Run('https://bitcoinfaucetx.com/faucet',$ua);
-			$leftt=$left-1;
-			$tmr=explode(';',explode(' var wait = ',$r1)[1])[0];//2328-1;
-			if($tmr){
-				tmr($tmr);goto faucet;
-			}
-			
-			echo col('bypasss','k');
-			$bot=explode('" rel=\"',$r1);
-			$bot1=explode('\"',$bot[1])[0];
-			$bot2=explode('\"',$bot[2])[0];
-			$bot3=explode('\"',$bot[3])[0];
-			
-			$bott = z($bot1,$bot2,$bot3)[$i];
-			
-			$csrf=explode('">',explode('_token_name" id="token" value="',$r1)[1])[0];//8626444245754dde619ea5f114ffa25b
-			$token=explode('">',explode('name="token" value="',$r1)[1])[0];
-			
-			$data="csrf_token_name=".$csrf."&token=".$token."&captcha=recaptchav2&g-recaptcha-response=";
-			$r2=Run('https://bitcoinfaucetx.com/faucet/verify',$ua,$data);
-			
-			if(preg_match('/Good job/',$r2)){
-				echo $r;
-				$ss=explode("'",explode("Swal.fire('Good job!', '",$r2)[1])[0];
-				ket('Success',$ss);
-				Ket('C left',$leftt-1);
-				Ket('Balance',info()[1]);
-				echo $line;
-			}else{
-				$wr= explode('</div>',explode('<div class="alert text-center alert-danger"><i class="fas fa-exclamation-circle"></i> ',$r2)[1])[0];//Invalid Claim
-				echo $r;
-				echo col($wr,'m');
-				sleep(2);
-				echo $r;
-			}
-		}
+	$r1=Run('https://bitcoinfaucetx.com/user/claim',$ua);
+	$tmr=explode(';',explode('var left = ',$r1)[1])[0];//2328-1;
+	if($tmr){
+		tmr($tmr);goto faucet;
 	}
+	echo col('bypasss','k');
+	$csrf=explode('">',explode('name="csrf_token" value="',$r1)[1])[0];
+			
+	$data = "csrf_token=".$csrf."&g-recaptcha-response=";
+	$r2=Run('https://bitcoinfaucetx.com/user/claim/verify',$ua,$data);
+	$ss=explode("</div>",explode("<div class='alert p-1 alert-success'>",$r2)[1])[0];
+	if($ss){
+		echo $r;
+		ket('Success',$ss);
+		Ket('C left',$left = $left-1);
+		Ket('Balance',info()[1]);
+		echo $line;
+	}else{
+		echo $r;
+		echo col("Gagal claim",'m');
+		sleep(2);
+		echo $r;
+	}
+}
 ptc:
 while(true){
-	$r1=Run('https://bitcoinfaucetx.com/ptc',$ua);
+	$r1=Run('https://bitcoinfaucetx.com/user/ptc',$ua);
+	if(preg_match('/Firewall Captcha/',$r1)){
+		echo col('Firewall detect','m');
+		$res = Run('https://bitcoinfaucetx.com/user/firewall?redirect=aHR0cHM6Ly9iaXRjb2luZmF1Y2V0eC5jb20vdXNlci9kYXNoYm9hcmQ=',$ua);
+		$csrf = explode('"',explode('<input type="hidden" name="csrf_token" value="',$res)[1])[0];
+		$data = "csrf_token=".$csrf."&g-recaptcha-response=";
+		Run('https://bitcoinfaucetx.com/user/firewall/check?redirect=aHR0cHM6Ly9iaXRjb2luZmF1Y2V0eC5jb20vdXNlci9kYXNoYm9hcmQ=',$ua,$data);
+		sleep(10);echo "\r                       \r";
+		goto faucet;
+	}
 	$sec=sec($r1);
 	$cf=$sec[0];
 	$fw=$sec[1];
 	if($cf||$fw==1){
-		goto ptc;
-		}
+		goto faucet;
+	}
 	$id=explode("'",explode('ptc/view/',$r1)[1])[0];
 	if($id){
-		$r2=Run('https://bitcoinfaucetx.com/ptc/view/'.$id,$ua);
-		$tmr=explode(';',explode('var timer = ',$r2)[1])[0];//15;
+		$r2=Run('https://bitcoinfaucetx.com/user/ptc/view/'.$id,$ua);
+		$tmr=explode(';',explode('var timeleft = ',$r2)[1])[0];//15;
 		if($tmr){
 			tmr($tmr);
 			}
-		$csrf=explode('">',explode('_token_name" value="',$r2)[1])[0];//8626444245754dde619ea5f114ffa25b
-		$token=explode('">',explode('name="token" value="',$r2)[1])[0];
+		$csrf=explode("'>",explode("<input type="hidden" name="csrf_token" class='csrf_data' value='",$r2)[1])[0];
 		
-		$data= "captcha=recaptchav2&g-recaptcha-response=&csrf_token_name=".$csrf."&token=".$token;
-		$r3=Run('https://bitcoinfaucetx.com/ptc/verify/'.$id,$ua,$data);
-		if(preg_match('/Good job/',$r3)){
-			$ss=explode("'",explode("Swal.fire('Good job!', '",$r3)[1])[0];
+		$data = "csrf_token=".$csrf."&g-recaptcha-response=";
+		$r3=Run('https://bitcoinfaucetx.com/user/ptc/claim/'.$id,$ua,$data);
+		$ss=explode("</div>",explode("<div class='alert p-1 alert-success'>",$r3)[1])[0];
+		if($ss){
+			echo $r;
 			ket('Success',$ss);
 			Ket('Balance',info()[1]);
 			echo $line;
-			}else{
-				echo col("invalid claim",'m');
-				sleep(5);
-				echo $r;
-			}
 		}else{
-			echo col('ptc has finished','m').$n.$line;
-			goto menu;
-			}
+			echo $r;
+			echo col("Gagal claim",'m');
+			sleep(2);
+			echo $r;
+		}
+	}else{
+		echo col('ptc has finished','m').$n.$line;
+		goto menu;
 	}
+}
 wd:
 $bal = str_replace('tokens','',info()[1]);
 $r = Run("https://bitcoinfaucetx.com/dashboard",$ua);
@@ -179,12 +183,23 @@ echo $line;
 goto menu;
 
 function info(){global $ua;
-	$url=Run("https://bitcoinfaucetx.com/dashboard",$ua);
-	$user=explode('</h5>',explode('<h5 class="font-size-15 text-truncate">',$url)[1])[0];
-	$arr=explode('<h4 class="mb-0">',$url);
-	$bal=explode('</h4>',$arr[1])[0];
-	$en=explode('</h4>',$arr[2])[0];
-	return array($user,$bal,$en);}
+	fir:
+	$url=Run("https://bitcoinfaucetx.com/user/dashboard",$ua);
+	if(preg_match('/Firewall Captcha/',$url)){
+		$res = Run('https://bitcoinfaucetx.com/user/firewall?redirect=aHR0cHM6Ly9iaXRjb2luZmF1Y2V0eC5jb20vdXNlci9kYXNoYm9hcmQ=',$ua);
+		$csrf = explode('"',explode('<input type="hidden" name="csrf_token" value="',$res)[1])[0];
+		$data = "csrf_token=".$csrf."&g-recaptcha-response=";
+		Run('https://bitcoinfaucetx.com/user/firewall/check?redirect=aHR0cHM6Ly9iaXRjb2luZmF1Y2V0eC5jb20vdXNlci9kYXNoYm9hcmQ=',$ua,$data);
+	}
+	$user=explode(' <span',explode('<h6 class="mb-0">',$url)[1])[0];
+	if($user){
+		$bal=explode('</h4>',explode(" id='balanc'>",$url)[1])[0];
+		$en= "-";
+		return array($user,$bal,$en);
+	}else{
+		goto fir;
+	}
+}
 
 //curl
 function Run($url, $httpheader = 0, $post = 0, $proxy = 0){ // url, postdata, http headers, proxy, uagent
@@ -246,7 +261,7 @@ function Slow($msg){$slow = str_split($msg);
 function tmr($tmr){$timr=time()+$tmr;while(true):
 	echo "\r                       \r";$res=$timr-time(); 
 	if($res < 1){break;}
-	echo col(date('H:i:s',$res),5);sleep(1);endwhile;}
+	echo col(date('i:s',$res),5);sleep(1);endwhile;}
 function cetak($msg, $tipe){
 	$u="\033[1;35m";$h="\033[1;32m";$p="\033[1;37m";$m="\033[1;31m";$k="\033[1;33m";$b="\033[1;34m";$c="\033[1;36m";$len = 56;$var = $u.'═';
 	if(strpos($msg, "|") == ""){$title = ((($len-strlen($msg))/2)-1);
@@ -266,11 +281,11 @@ function sec($res){
 		sleep(10);echo $r;
 		$a=1;
 		}
-	//if(preg_match('/Firewall/',$res)){
-		//echo col('Firewall detect','m');
-		//sleep(10);echo $r;
-		//$b=1;
-		//}
+	if(preg_match('/Firewall Captcha/',$res)){
+		echo col('Firewall detect','m');
+		sleep(10);echo $r;
+		$b=1;
+	}
 	return array($a,$b);
 }
 $sec=sec($r1);
@@ -291,4 +306,3 @@ function bn(){c();global $master;
 	cetak("SCRIPT GRATIS - RESIKO DI TANGGUNG USER ", "warn");
 	cetak("#","line");
 	echo "\n\n";}
-
