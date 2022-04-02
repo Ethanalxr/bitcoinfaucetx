@@ -5,7 +5,7 @@ $zone = $api["timezone"];
 if($zone){
 date_default_timezone_set($zone);}
 
-$master = ["iewil","bitcoinfaucetx","1.3","5"];//master,title,versi,short
+$master = ["iewil","bitcoinfaucetx","1.4","5"];//master,title,versi,short
 $n = "\n";$n2 = "\n\n";$t = "\t";$r="\r                              \r";
 $line=col(str_repeat('═',56),'u').$n;
 
@@ -31,9 +31,6 @@ if($status == "on"){
 echo col(" The script is disabled","rr").$n2;
 echo Slow($disable).$n;
 exit;}
-//$cookie='_ga=GA1.2.228534775.1648864401; _gid=GA1.2.1254795775.1648864401; ci_session=4f646da23e0b9fe65ba83d0dda44cccf5f7e583e; _gat_gtag_UA_219975471_1=1; _ccnsad_pop=500; csrf_cookie=52be2994d8ada5cf8720f9da57200a7b';
-//$user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36';
-
 
 //Bot
 bn();
@@ -143,7 +140,7 @@ while(true){
 		if($tmr){
 			tmr($tmr);
 			}
-		$csrf=explode("'>",explode("<input type="hidden" name="csrf_token" class='csrf_data' value='",$r2)[1])[0];
+		$csrf=explode("'>",explode(" class='csrf_data' value='",$r2)[1])[0];
 		
 		$data = "csrf_token=".$csrf."&g-recaptcha-response=";
 		$r3=Run('https://bitcoinfaucetx.com/user/ptc/claim/'.$id,$ua,$data);
